@@ -1,0 +1,6 @@
+[submodule "TFWWorkbench-Lua"]
+	path = TFWWorkbench-Lua
+	url = https://github.com/smotti/TFWWorkbench-Lua.git
+[submodule "TFWWorkbench-Cpp"]
+	path = TFWWorkbench-Cpp
+	url = https://github.com/smotti/TFWWorkbench-Cpp.git

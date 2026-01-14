@@ -254,3 +254,17 @@ table row.
   you SHOULD provide the original value(s) as well. For example when modifying a vendor's "sold" lists
   you have to include every item of that list (simply copy it from the json dump file) and make your
   modification(s).
+
+# Thanks!
+
+Goes out to:
+
+- Fundog Studios
+- trumank
+- atenfyr
+- FModel developers
+- UE4SS developers
+  - Special Thanks to: Narknon and Martin
+- Special Thanks to the other TFW modders: imi & Meganiikko
+
+Without those people this mod wouldn't exist.

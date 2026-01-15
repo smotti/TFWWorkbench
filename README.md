@@ -21,14 +21,14 @@ conflict is made easier by simply editing a json file.
 3. Copy the the contents of the archive into a folder named `TFWWorkbench` in UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
 4. Enable the mod by adding the line `TFWWorkbench : 1` to the `mods.txt` in `Binaries\Win64\ue4ss\Mods\`
 5. Create the mod directory `TFWWorkbench` in `Content\Paks\Mods\TFWWorkbench`
-6. Either copy the folders from the `Examples` into `Content\Paks\Mods\TFWWorkbench` or create them yourself
+6. Either copy the folders from the `Examples` into `Content\Paks\Mods\TFWWorkbench\DataTables` or create them yourself
   - If you copied the examples remove the json files that they contain
 
 # How to use it
 
 1. Start the game
 2. Open the Unreal Engine console by pressing `~` or `F10`
-3. Execute the command `DumpDataTables`, this will create a json dump of each supported table in `Content\Paks\Mods\TFWWorkbench`
+3. Execute the command `DumpDataTables`, this will create a json dump of each supported table in `Content\Paks\Mods\TFWWorkbench\Dumps`
 4. Use the dumped data to write the json files to add/modify/remove entries from the supported data tables (see [Examples](https://github.com/smotti/TFWWorkbench-Lua/tree/main/Examples))
 
 # Supported Data Tables
@@ -94,7 +94,7 @@ The order of the data tabels that are being modified:
 
 ## Action: `Add`
 
-As an example. Create a file named `001_MyItem.json` in `Content\Paks\Mods\TFWWorkbench\Item`.
+As an example. Create a file named `001_MyItem.json` in `Content\Paks\Mods\TFWWorkbench\DataTable\Item`.
 Open it and add the following contents:
 ```json
 [
@@ -182,7 +182,7 @@ As a basis you can always use data from the dumped data table json files.
 ## Action: `Modify`
 
 As an example. If you want to modify the credit value of the "Fist Aid Kit". Create
-a file the file `Content\Paks\Mods\TFWWorkbench\ItemValue\001_MyModification.json`.
+a file the file `Content\Paks\Mods\TFWWorkbench\DataTable\ItemValue\001_MyModification.json`.
 With the following contents:
 ```json
 [
@@ -204,7 +204,7 @@ See below for further things to look out for when modifying entries.
 ## Action: `Remove`
 
 This example show how to remove the games surplus AK. Create the file
-`Content\Paks\Mods\TFWWorkbench\WeaponsDetailsData\001_RemoveSurplus.json`.
+`Content\Paks\Mods\TFWWorkbench\DataTable\WeaponsDetailsData\001_RemoveSurplus.json`.
 Open the file and add the following:
 ```json
 [
@@ -217,6 +217,13 @@ Open the file and add the following:
 
 Note that when removing an entry you only have to specify the name of the data
 table row.
+
+# Limitations
+
+- Currently the mod doesn't support modifying nested structures. For example it can't
+  add/remove an item to/from an existing list of vendor items. You'd have to provide
+  a complete list of all items the vendor should sell (including your own). This of
+  course means that other mods can "break" your modification in this regard.
 
 # Best Practices and other Stuff
 

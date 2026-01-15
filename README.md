@@ -1,6 +1,6 @@
 # Description
 
-A mod that modifies the data tables, of the game The Forever Winter, at runtime.
+A mod that allows for modifying the data tables, of the game The Forever Winter, at runtime.
 
 # Why?
 
@@ -61,7 +61,7 @@ will have the tag `Inventory.Item.TestItem`.
 ```json
 [
     {
-        "Action": "Add|Modify|Remove",
+        "Action": "Add|Replace|Remove",
         "Name": "NameOfTheDataTableRow",
         "Data": {
             ...
@@ -80,7 +80,7 @@ As they are defined as json objects in a json list.
 
 The actions will be executed in the following order by the mod:
 1. Add
-2. Modify
+2. Replace
 3. Remove
 
 The order of the data tabels that are being modified:
@@ -179,15 +179,17 @@ Open it and add the following contents:
 When adding an entry to a data table it's better to provide a value for each field.
 As a basis you can always use data from the dumped data table json files.
 
-## Action: `Modify`
+## Action: `Replace`
 
-As an example. If you want to modify the credit value of the "Fist Aid Kit". Create
+As the name of the action implies. It replaces the value for a property with the
+new one specified in the action file.
+As an example. If you want to replace the credit value of the "Fist Aid Kit". Create
 a file the file `Content\Paks\Mods\TFWWorkbench\DataTable\ItemValue\001_MyModification.json`.
 With the following contents:
 ```json
 [
     {
-        "Action": "Modify",
+        "Action": "Replace",
         "Name": "Medical_Heal",
         "Data": {
             "DataTable": "/Game/Blueprints/Data/Value/LEGACY_ItemValueOverrideData.LEGACY_ItemValueOverrideData",
@@ -227,13 +229,13 @@ table row.
 
 # Best Practices and other Stuff
 
-- When modifying the same entry in a table, especially when modifying complex properties (i.e. lists or maps),
-  define multiple `Modify` action entries. For example modifying a vendor's "sold" lists:
+- When modifying the same entry in a table, especially when replacing complex properties (i.e. lists or maps),
+  define multiple `Replace` action entries. For example replacing a vendor's "sold" lists:
   ```json
   [
 
     {
-        "Action": "Modify",
+        "Action": "Replace",
         "Name": "WesternWeaponVendor",
         "Data": {
             "MapedItemsSold": {
@@ -249,7 +251,7 @@ table row.
         }
     },
     {
-        "Action": "Modify",
+        "Action": "Replace",
         "Name": "WesternWeaponVendor",
         "Data": {
             "MapedWeaponsSold": {
@@ -267,7 +269,7 @@ table row.
   ] 
   ```
 
-- The `Modify` action replaces the value of the specified field. This means when modifying lists/maps
+- The `Replace` action replaces the value of the specified field. This means when modifying lists/maps
   you SHOULD provide the original value(s) as well. For example when modifying a vendor's "sold" lists
   you have to include every item of that list (simply copy it from the json dump file) and make your
   modification(s).

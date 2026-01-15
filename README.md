@@ -18,7 +18,7 @@ conflict is made easier by simply editing a json file.
 
 1. Download a release: https://github.com/smotti/TFWWorkbench/releases
 2. Unpack the release archive
-3. Copy the `TFWWorkbench` folder into UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
+3. Copy the the contents of the archive into a folder named `TFWWorkbench` in UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
 4. Enable the mod by adding the line `TFWWorkbench : 1` to the `mods.txt` in `Binaries\Win64\ue4ss\Mods\`
 5. Create the mod directory `TFWWorkbench` in `Content\Paks\Mods\TFWWorkbench`
 6. Either copy the folders from the `Examples` into `Content\Paks\Mods\TFWWorkbench` or create them yourself
@@ -45,6 +45,16 @@ to the data table `InventoryItemDetailsData`.
 - VendorDataTable -> VendorData
 - WeaponPartsStatsData -> WeaponPartsStatsData
 - WeaponsDetailsData -> WeaponsDetailsData
+
+Note that the mod will automatically add entries to the following two data tables.
+As they are required in order for new items to be usable by other parts of the game.
+
+- DT_ItemTags (questionable though)
+- DT_TagToRowHandle
+
+The mod will generate the item tag based on its name (row name) and given `ParentTag`.
+For example the tag for the `TestItem`, that's added to the game in belows example,
+will have the tag `Inventory.Item.TestItem`.
 
 # Schema of "action" json files
 
@@ -254,6 +264,9 @@ table row.
   you SHOULD provide the original value(s) as well. For example when modifying a vendor's "sold" lists
   you have to include every item of that list (simply copy it from the json dump file) and make your
   modification(s).
+- When adding the value of items via `ItemValue` you need to specify the value data table in which
+  to store the item value. This value table is also referenced by the `InventoryItemDetailsData` entry
+  of the item. See the [example](https://github.com/smotti/TFWWorkbench-Lua/blob/main/Examples/ItemValue/001_TestItem.json) on how to specify the data table.
 
 # Thanks!
 

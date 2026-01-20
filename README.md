@@ -18,7 +18,7 @@ conflict is made easier by simply editing a json file.
 
 1. Download a release: https://github.com/smotti/TFWWorkbench/releases
 2. Unpack the release archive
-3. Copy the the contents of the archive into UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
+3. Copy the the contents of the archive (excluding `Examples`) into UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
 4. Enable the mod by adding the line `TFWWorkbench : 1` to the `mods.txt` in `Binaries\Win64\ue4ss\Mods\`
 5. Create the mod directory `TFWWorkbench` in `Content\Paks\Mods\TFWWorkbench`
   - Gets also automatically created the first time the game starts with the mod enabled
@@ -354,7 +354,7 @@ you have to provide the element that should be removed.
   - If you need to modify a value in a list, for example `GameplayTags`, use a combination
     of `RemoveFrom` and `AddTo`
 
-# Best Practices and other Stuff
+# Guidelines
 
 - When modifying the same entry in a table, especially when replacing complex properties (i.e. lists or maps),
   define multiple `Replace` action entries. For example replacing a vendor's "sold" lists:
@@ -395,13 +395,20 @@ you have to provide the element that should be removed.
   ] 
   ```
 
-- The `Replace` action replaces the value of the specified field. This means when modifying lists/maps
-  you SHOULD provide the original value(s) as well. For example when modifying a vendor's "sold" lists
-  you have to include every item of that list (simply copy it from the json dump file) and make your
+- The `Replace` action replaces the value of the specified field. This means
+  when modifying lists/maps you SHOULD provide the original value(s) as well.
+  For example when modifying a vendor's "sold" lists you have to include every
+  item of that list (simply copy it from the json dump file) and make your
   modification(s).
-- When adding the value of items via `ItemValue` you need to specify the value data table in which
-  to store the item value. This value table is also referenced by the `InventoryItemDetailsData` entry
-  of the item. See the [example](https://github.com/smotti/TFWWorkbench-Lua/blob/main/Examples/ItemValue/001_TestItem.json) on how to specify the data table.
+- When adding the value of items via `ItemValue` you need to specify the value
+  data table in which to store the item value. This value table is also referenced
+  by the `InventoryItemDetailsData` entry of the item. See the [example](https://github.com/smotti/TFWWorkbench-Lua/blob/main/Examples/ItemValue/001_TestItem.json) on how to specify the data table.
+- Use `AddTo`, `ModifyIn`, and `RemoveFrom` where possible! As this improves
+  compatibility and reduces the risk of potential conflicts with other mods
+  that modify the same data table, data table row, or data table row property.
+  For example when adding recipes to a `CraftingGroup` use `AddTo`. Or when
+  adding new items to a vendor. Another exmaple is if you want to adjust the
+  `VendorLevel` or `Quantity` of an item/weapon sold by a vendor use `ModifyIn`.
 
 # Thanks!
 

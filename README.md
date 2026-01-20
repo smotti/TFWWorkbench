@@ -18,11 +18,13 @@ conflict is made easier by simply editing a json file.
 
 1. Download a release: https://github.com/smotti/TFWWorkbench/releases
 2. Unpack the release archive
-3. Copy the the contents of the archive into a folder named `TFWWorkbench` in UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
+3. Copy the the contents of the archive into UE4SS' `Mods` folder: `Binaries\Win64\ue4ss\Mods`
 4. Enable the mod by adding the line `TFWWorkbench : 1` to the `mods.txt` in `Binaries\Win64\ue4ss\Mods\`
 5. Create the mod directory `TFWWorkbench` in `Content\Paks\Mods\TFWWorkbench`
-6. Either copy the folders from the `Examples` into `Content\Paks\Mods\TFWWorkbench\DataTables` or create them yourself
+  - Gets also automatically created the first time the game starts with the mod enabled
+6. Optionally copy the folders from the `Examples` into `Content\Paks\Mods\TFWWorkbench\DataTables`
   - If you copied the examples remove the json files that they contain
+  - Directories will get created automatically the first time the game starts with the mod enabled
 
 # How to use it
 
@@ -33,7 +35,7 @@ conflict is made easier by simply editing a json file.
 
 # Supported Data Tables
 
-This is a mapping of the supported data table to the mod folder who's json files
+This is a mapping of the supported data table to the mod folder whose json files
 will cause a modifcation of the data table. For example if you create a json file
 in the `Item` folder. Than the mod will apply the actions defined in that json file
 to the data table `InventoryItemDetailsData`.
@@ -61,7 +63,7 @@ will have the tag `Inventory.Item.TestItem`.
 ```json
 [
     {
-        "Action": "Add|Replace|Remove",
+        "Action": "Add|AddTo|ModifyIn|Remove|RemoveFrom|Replace",
         "Name": "NameOfTheDataTableRow",
         "Data": {
             ...
@@ -82,6 +84,9 @@ The actions will be executed in the following order by the mod:
 1. Add
 2. Replace
 3. Remove
+4. AddTo
+5. ModifyIn
+6. RemoveFrom
 
 The order of the data tabels that are being modified:
 1. InventoryItemDetailsData
@@ -179,6 +184,80 @@ Open it and add the following contents:
 When adding an entry to a data table it's better to provide a value for each field.
 As a basis you can always use data from the dumped data table json files.
 
+## Action: `AddTo`
+
+This action adds a new element to a property list or map. For example to add a new
+weapon to a vendors `MapedWeaponsSold` you can do the following:
+```json
+[
+    {
+        "Action": "AddTo",
+        "Name": "WesternWeaponVendor",
+        "Data": {
+            "MapedWeaponsSold": {
+                "TestWeapon": {
+                    "VendorLevel": 0,
+                    "Quantity": 10,
+                    "ItemRowHandle": {
+                        "DataTable": "/Game/Blueprints/Data/WeaponsDetailsData.WeaponsDetailsData",
+                        "RowName": "TestWeapon"
+                    }
+                },
+                "RFL20": {
+                    "Quantity": 1,
+                    "VendorLevel": 1,
+                    "ItemRowHandle": {
+                        "RowName": "RFL20",
+                        "DataTable": "/Game/Blueprints/Data/WeaponsDetailsData.WeaponsDetailsData"
+                    }
+                }
+            }
+        }
+    }
+]
+```
+
+This action also supports "property paths". For example to allow Scav Girl to use
+the SCAR you can do the following:
+```json
+[
+    {
+        "Action": "AddTo",
+        "Name": "HRF01",
+        "Data": {
+            "AllowTags.GameplayTags": [
+                {
+                    "TagName": "Pawn.Player.Girl"
+                }
+            ]
+        }
+    }
+]
+```
+
+Which will add the tag `Pawn.Player.Girl` to the `GameplayTags` which is a list element
+of the `AllowTags` map property.
+
+## Action: `ModifyIn`
+
+The `ModifyIn` action allows for editing of property values of nested maps. For example
+if you want to modify the quantity of an item sold by a vendor you can do the following:
+```json
+[
+    {
+        "Action": "ModifyIn",
+        "Name": "WesternWeaponVendor",
+        "Data": {
+            "MapedWeaponsSold.TestWeapon": {
+                "Quantity": 1
+            } 
+        }
+    }
+]
+```
+
+Note that this operation supports "property path" as well (`MapedWeaponsSold.TestWeapon`).
+
 ## Action: `Replace`
 
 As the name of the action implies. It replaces the value for a property with the
@@ -220,12 +299,60 @@ Open the file and add the following:
 Note that when removing an entry you only have to specify the name of the data
 table row.
 
+## Action: `RemoveFrom`
+
+The action `RemoveFrom` allows for removing specific elements for a property whose
+value is either a list or map. For example if you want to remove a weapon from a
+vendors inventory you can do the following:
+```json
+[
+    {
+        "Action": "RemoveFrom",
+        "Name": "WesternWeaponVendor",
+        "Data": {
+            "MapedWeaponsSold": {
+                "GRL01": {},
+                "SHG01": {}
+            }
+        }
+    }
+]
+```
+
+This will remove the "S12" shotgun and the "Grenade Launcher" from Grillo. Note that
+you have to provide an empty value.
+
+Another example would be to don't allow a character to not be able to use a specific
+weapon. For example to disallow the use of the SCAR for Old Man:
+```json
+[
+    {
+        "Action": "RemoveFrom",
+        "Name": "HRF01",
+        "Data": {
+            "AllowTags.GameplayTags": [
+                {
+                    "TagName": "Pawn.Player.OldMan"
+                }
+            ]
+        }
+    }
+]
+```
+
+Note that if you want to remove an element from a list. Which `GameplayTags` is. Than
+you have to provide the element that should be removed.
+
 # Limitations
 
-- Currently the mod doesn't support modifying nested structures. For example it can't
-  add/remove an item to/from an existing list of vendor items. You'd have to provide
-  a complete list of all items the vendor should sell (including your own). This of
-  course means that other mods can "break" your modification in this regard.
+- The actions `AddTo`, `ModifyIn`, and `RemoveFrom` don't work for the following, use
+  `Replace` instead:
+  - Value data tables
+  - WeaponPartStatsData
+- The action `ModifyIn` only works on properties whose value is a map, i.e. a vendors
+  item lists
+  - If you need to modify a value in a list, for example `GameplayTags`, use a combination
+    of `RemoveFrom` and `AddTo`
 
 # Best Practices and other Stuff
 
@@ -233,7 +360,6 @@ table row.
   define multiple `Replace` action entries. For example replacing a vendor's "sold" lists:
   ```json
   [
-
     {
         "Action": "Replace",
         "Name": "WesternWeaponVendor",
